@@ -55,6 +55,7 @@ data <- lapply(html_files, function(file){
   links <- html_data |>
     html_elements("a.publication_title.visitable") |>
     html_attr("href")
+  links <- paste0("https://besjournals.onlinelibrary.wiley.com", links)
 
   df <- tibble(
     titles = titles,
