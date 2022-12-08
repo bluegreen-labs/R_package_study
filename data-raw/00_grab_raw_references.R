@@ -41,26 +41,39 @@ if (length(html_files) == 0) {
 data <- lapply(html_files, function(file){
   html_data <- read_html(file)
 
+  # get title
   titles <- html_data |>
     html_elements("span.hlFld-Title") |>
     html_text()
 
+  # get date published
   date_published <- html_data |>
     html_elements("p.meta__epubDate") |>
     html_text()
   date_published <- lubridate::dmy(date_published)
-
   date_published <- gsub("First published: ","", date_published)
 
+  # get links
   links <- html_data |>
     html_elements("a.publication_title.visitable") |>
     html_attr("href")
   links <- paste0("https://besjournals.onlinelibrary.wiley.com", links)
 
+  # get doi
   doi <- basename(links)
+
+  # get package name
+  # first approximat based on regexpr
+  package_names <- sub(':.*$','', titles)
+  package_names <- lapply(package_names, function(package){
+    strings <- strsplit(package," ")[[1]]
+    ifelse(length(strings)>1, NA, strings)
+  })
+  package_names <- do.call("rbind", package_names)
 
   df <- tibble(
     titles = titles,
+    r_package = ifelse(grepl("r package", titles, ignore.case = TRUE), TRUE, FALSE),
     links = links,
     doi = doi,
     date_published = date_published

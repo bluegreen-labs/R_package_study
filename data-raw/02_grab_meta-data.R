@@ -67,7 +67,7 @@ data <- lapply(html_files, function(file){
   citations <- html_data |>
     html_elements("div.epub-section.cited-by-count") |>
     html_text2()
-  citations <- as.numeric(gsub("Citations: ","", citations))
+  citations <- as.numeric(gsub(",","", gsub("Citations: ","", citations)))
   citations <- ifelse(length(citations) == 0, 0, citations)
 
   df <- dplyr::tibble(
