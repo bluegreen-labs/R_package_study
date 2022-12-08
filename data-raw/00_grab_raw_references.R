@@ -6,7 +6,7 @@ library(rvest)
 html_files <- list.files("data-raw", "*.html", full.names = TRUE)
 
 if (length(html_files) == 0) {
-  # run with: docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.1
+  # run with: docker run -p 4445:4444 selenium/standalone-firefox:2.53.1
 
   # search for package & (Applications || APPLICATIONS)
   url1 <- "https://besjournals.onlinelibrary.wiley.com/action/doSearch?AllField=package&SeriesKey=2041210x&pageSize=500&startPage=&rel=nofollow&ContentItemCategory=Application"
@@ -57,9 +57,12 @@ data <- lapply(html_files, function(file){
     html_attr("href")
   links <- paste0("https://besjournals.onlinelibrary.wiley.com", links)
 
+  doi <- basename(links)
+
   df <- tibble(
     titles = titles,
     links = links,
+    doi = doi,
     date_published = date_published
     )
 
