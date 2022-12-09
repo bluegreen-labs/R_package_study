@@ -19,14 +19,14 @@ articles <- read.csv("data/article_list.csv")
 # loop over all articles and download the
 # html page (all these can be read freely
 # so should provide true content)
-lapply(articles$links, function(url){
+lapply(articles$links[321:nrow(articles)], function(url){
 
   message(url)
-  if(file.exists(
-    file.path("data-raw/articles/", basename(url),
-              paste0(basename(url),".html")))) {
-    return(NULL)
-  }
+  # if(file.exists(
+  #   file.path("data-raw/articles/", basename(url),
+  #             paste0(basename(url),".html")))) {
+  #   return(NULL)
+  # }
 
   # navigate to page and download
   # content
