@@ -8,10 +8,9 @@ html_files <- list.files(
   "*.html",
   recursive = TRUE,
   full.names = TRUE
-  )
+)
 
-data <- lapply(html_files, function(file){
-
+data <- lapply(html_files, function(file) {
   # read html file
   html_data <- read_html(file)
 
@@ -26,7 +25,7 @@ data <- lapply(html_files, function(file){
 
   # If no references were found this is a redirect to a pdf
   # or some other fake page, flag as unprocessed
-  if(length(references)==0){
+  if (length(references) == 0) {
     df <- tibble(
       doi = basename(file),
       processed = FALSE,
@@ -46,7 +45,7 @@ data <- lapply(html_files, function(file){
   # for manual inspection
   writeLines(
     content,
-    paste0(tools::file_path_sans_ext(file),".txt")
+    paste0(tools::file_path_sans_ext(file), ".txt")
   )
 
   # Mention of CRAN or Bioconductor
@@ -65,7 +64,7 @@ data <- lapply(html_files, function(file){
   citations <- html_data |>
     html_elements("div.epub-section.cited-by-count") |>
     html_text2()
-  citations <- as.numeric(gsub(",","", gsub("Citations: ","", citations)))
+  citations <- as.numeric(gsub(",", "", gsub("Citations: ", "", citations)))
   citations <- ifelse(length(citations) == 0, 0, citations)
 
   # grab installation references
@@ -73,12 +72,12 @@ data <- lapply(html_files, function(file){
     glob2rx("*install.package*"),
     content,
     ignore.case = TRUE
-    )
+  )
   package_install_bioc <- grepl(
     glob2rx("*install(*"),
     content,
     ignore.case = TRUE
-    )
+  )
   package_install <- ifelse(
     any(c(package_install_bioc, package_install_cran)),
     TRUE,
@@ -105,8 +104,8 @@ data <- bind_rows(data)
 article_meta_data <- read.table(
   "data/article_list.csv",
   header = TRUE,
-  sep = ','
-  )
+  sep = ","
+)
 
 # join with data from content
 data <- left_join(article_meta_data, data) |>
@@ -114,16 +113,16 @@ data <- left_join(article_meta_data, data) |>
 
 # drop processed flag if all sites were
 # properly processed
-if(all(data$processed)) {
+if (all(data$processed)) {
   data <- data |>
     select(-processed)
 }
 
 # grab package name from title (provisional)
-package_names <- sub(':.*$','', data$titles)
-package_names <- lapply(package_names, function(package){
-  strings <- strsplit(package," ")[[1]]
-  ifelse(length(strings)>1, NA, strings)
+package_names <- sub(":.*$", "", data$titles)
+package_names <- lapply(package_names, function(package) {
+  strings <- strsplit(package, " ")[[1]]
+  ifelse(length(strings) > 1, NA, strings)
 })
 data$package_name <- do.call("rbind", package_names)
 

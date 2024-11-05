@@ -22,11 +22,11 @@ articles <- read.csv("data/article_list.csv")
 lapply(articles$links[321:nrow(articles)], function(url){
 
   message(url)
-  # if(file.exists(
-  #   file.path("data-raw/articles/", basename(url),
-  #             paste0(basename(url),".html")))) {
-  #   return(NULL)
-  # }
+  if(file.exists(
+    file.path("data-raw/articles/", basename(url),
+              paste0(basename(url),".html")))) {
+    return(NULL)
+  }
 
   # navigate to page and download
   # content
